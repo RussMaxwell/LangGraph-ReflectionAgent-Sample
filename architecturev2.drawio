@@ -1,0 +1,524 @@
+<mxfile host="app.diagrams.net" type="device">
+
+  <!-- ═══════════════════════════════════════════════════════════════════════ -->
+  <!--  PAGE 1 — Topology overview                                              -->
+  <!--  Hub VNet (control plane) + production spoke VNets + on-prem via ExR     -->
+  <!-- ═══════════════════════════════════════════════════════════════════════ -->
+  <diagram name="1 — Topology overview" id="topology">
+    <mxGraphModel dx="2400" dy="1700" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2400" pageHeight="1700" math="0" shadow="0" background="#FFFFFF">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <!-- ── Title ── -->
+        <mxCell id="title" value="IIS Auto-Healing — Multi-VNet Topology (Arca-Secured)" style="text;html=1;align=center;verticalAlign=middle;fontSize=22;fontStyle=1;fontColor=#1F3864;" vertex="1" parent="1">
+          <mxGeometry x="40" y="20" width="2320" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="subtitle" value="Hub VNet hosts Function App + all PEs · Production IIS VMs live in spoke VNets and on-prem · Telemetry → Event Hubs · Runbooks executed locally by Hybrid Workers on each VM" style="text;html=1;align=center;verticalAlign=middle;fontSize=12;fontStyle=2;fontColor=#555555;" vertex="1" parent="1">
+          <mxGeometry x="40" y="60" width="2320" height="24" as="geometry"/>
+        </mxCell>
+
+        <!-- ── PUBLIC strip ── -->
+        <mxCell id="public-zone" value="PUBLIC — Microsoft control plane (RBAC/AAD-gated, never private)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8f8f8;strokeColor=#999999;dashed=1;verticalAlign=top;fontSize=12;fontStyle=1;fontColor=#555555;" vertex="1" parent="1">
+          <mxGeometry x="40" y="100" width="2320" height="100" as="geometry"/>
+        </mxCell>
+        <mxCell id="aad" value="Microsoft Entra ID&#10;(token endpoint)" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#0078D4;strokeColor=#ffffff;html=1;align=center;fontSize=10;verticalLabelPosition=bottom;verticalAlign=top;aspect=fixed;shape=mxgraph.azure2.azure_active_directory;" vertex="1" parent="1">
+          <mxGeometry x="600" y="125" width="60" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="arm" value="Azure Resource Manager&#10;(management.azure.com)" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#0078D4;strokeColor=#ffffff;html=1;align=center;fontSize=10;verticalLabelPosition=bottom;verticalAlign=top;aspect=fixed;shape=mxgraph.azure2.management_groups;" vertex="1" parent="1">
+          <mxGeometry x="1200" y="125" width="60" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="public-note" value="Hybrid Worker agents on every VM (Azure + on-prem) connect outbound to&#10;Automation Account — via PE in hub when reachable, or AMPLS over ExpressRoute" style="text;html=1;align=center;verticalAlign=middle;fontSize=10;fontStyle=2;fontColor=#555555;" vertex="1" parent="1">
+          <mxGeometry x="1640" y="130" width="600" height="50" as="geometry"/>
+        </mxCell>
+
+        <!-- ── HUB VNet ── -->
+        <mxCell id="hub-vnet" value="Hub VNet (Control plane)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;verticalAlign=top;fontSize=14;fontStyle=1;fontColor=#1F3864;" vertex="1" parent="1">
+          <mxGeometry x="40" y="220" width="600" height="960" as="geometry"/>
+        </mxCell>
+        <mxCell id="hub-icon" value="" style="sketch=0;outlineConnect=0;gradientColor=none;fillColor=#0078D4;strokeColor=#ffffff;html=1;aspect=fixed;shape=mxgraph.azure2.virtual_networks;" vertex="1" parent="1">
+          <mxGeometry x="60" y="232" width="22" height="22" as="geometry"/>
+        </mxCell>
+
+        <!-- subnet-func-integ -->
+        <mxCell id="hub-subnet-func" value="subnet-func-integ" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1e6f1;strokeColor=#9bb1d8;verticalAlign=top;fontSize=11;fontStyle=1;fontColor=#1F3864;" vertex="1" parent="1">
+          <mxGeometry x="60" y="280" width="560" height="180" as="geometry"/>
+        </mxCell>
+        <mxCell id="hub-func" value="Function App&#10;Poller (60s) + Orchestrator (LangGraph)" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#0078D4;strokeColor=#ffffff;html=1;align=center;fontSize=10;verticalLabelPosition=bottom;verticalAlign=top;aspect=fixed;shape=mxgraph.azure2.function_apps;" vertex="1" parent="1">
+          <mxGeometry x="290" y="320" width="80" height="80" as="geometry"/>
+        </mxCell>
+
+        <!-- subnet-pe (compact) -->
+        <mxCell id="hub-subnet-pe" value="subnet-pe — all Private Endpoints" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1e6f1;strokeColor=#9bb1d8;verticalAlign=top;fontSize=11;fontStyle=1;fontColor=#1F3864;" vertex="1" parent="1">
+          <mxGeometry x="60" y="480" width="560" height="280" as="geometry"/>
+        </mxCell>
+        <mxCell id="hub-pe-list" value="• PE → Storage  (table/blob/queue/file)&#10;• PE → Event Hubs namespace&#10;• PE → ADX (query)&#10;• PE → Azure OpenAI&#10;• PE → AMPLS  (LAW + DCE + AppIns)&#10;• PE → Automation Account  (Hybrid Worker traffic)&#10;• PE → Function App SCM (inbound)" style="text;html=1;align=left;verticalAlign=middle;fontSize=11;fontColor=#1F3864;spacingLeft=20;" vertex="1" parent="1">
+          <mxGeometry x="100" y="510" width="480" height="240" as="geometry"/>
+        </mxCell>
+        <mxCell id="hub-pe-icon" value="" style="sketch=0;outlineConnect=0;gradientColor=none;fillColor=#0078D4;strokeColor=#ffffff;html=1;aspect=fixed;shape=mxgraph.azure2.private_link_service;" vertex="1" parent="1">
+          <mxGeometry x="540" y="492" width="32" height="32" as="geometry"/>
+        </mxCell>
+        <mxCell id="hub-pe-detail-link" value="↳ see Page 2 for full PE detail" style="text;html=1;align=center;verticalAlign=middle;fontSize=10;fontStyle=2;fontColor=#888888;" vertex="1" parent="1">
+          <mxGeometry x="60" y="730" width="560" height="20" as="geometry"/>
+        </mxCell>
+
+        <!-- subnet-er-gateway -->
+        <mxCell id="hub-subnet-gw" value="GatewaySubnet" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1e6f1;strokeColor=#9bb1d8;verticalAlign=top;fontSize=11;fontStyle=1;fontColor=#1F3864;" vertex="1" parent="1">
+          <mxGeometry x="60" y="780" width="560" height="180" as="geometry"/>
+        </mxCell>
+        <mxCell id="hub-er-gw" value="ExpressRoute Gateway&#10;(VNet ↔ MSEE peering)" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#0078D4;strokeColor=#ffffff;html=1;align=center;fontSize=10;verticalLabelPosition=bottom;verticalAlign=top;aspect=fixed;shape=mxgraph.azure2.expressroute_circuits;" vertex="1" parent="1">
+          <mxGeometry x="290" y="820" width="80" height="80" as="geometry"/>
+        </mxCell>
+
+        <!-- jumpbox subnet (optional but useful) -->
+        <mxCell id="hub-subnet-jump" value="subnet-jumpbox  (deploy / SCM access)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1e6f1;strokeColor=#9bb1d8;verticalAlign=top;fontSize=11;fontStyle=1;fontColor=#1F3864;" vertex="1" parent="1">
+          <mxGeometry x="60" y="980" width="560" height="160" as="geometry"/>
+        </mxCell>
+        <mxCell id="hub-jumpbox" value="Jumpbox / DevOps runner&#10;(zip-deploy via SCM PE,&#10;runs Deploy-*.ps1)" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#0078D4;strokeColor=#ffffff;html=1;align=center;fontSize=10;verticalLabelPosition=bottom;verticalAlign=top;aspect=fixed;shape=mxgraph.azure2.virtual_machine;" vertex="1" parent="1">
+          <mxGeometry x="290" y="1020" width="80" height="80" as="geometry"/>
+        </mxCell>
+
+        <!-- ── Spoke VNet 1: production app (Azure) ── -->
+        <mxCell id="spoke1" value="Spoke VNet — prod-app-1  (Azure-hosted IIS)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;verticalAlign=top;fontSize=14;fontStyle=1;fontColor=#1F3864;" vertex="1" parent="1">
+          <mxGeometry x="680" y="220" width="780" height="460" as="geometry"/>
+        </mxCell>
+        <mxCell id="spoke1-icon" value="" style="sketch=0;outlineConnect=0;gradientColor=none;fillColor=#0078D4;strokeColor=#ffffff;html=1;aspect=fixed;shape=mxgraph.azure2.virtual_networks;" vertex="1" parent="1">
+          <mxGeometry x="700" y="232" width="22" height="22" as="geometry"/>
+        </mxCell>
+        <mxCell id="spoke1-subnet" value="subnet-app" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1e6f1;strokeColor=#9bb1d8;verticalAlign=top;fontSize=11;fontStyle=1;fontColor=#1F3864;" vertex="1" parent="1">
+          <mxGeometry x="700" y="280" width="740" height="380" as="geometry"/>
+        </mxCell>
+        <mxCell id="spoke1-nsg" value="NSG" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#0078D4;strokeColor=#ffffff;html=1;align=center;fontSize=9;verticalLabelPosition=bottom;verticalAlign=top;aspect=fixed;shape=mxgraph.azure2.network_security_groups;" vertex="1" parent="1">
+          <mxGeometry x="1396" y="288" width="28" height="28" as="geometry"/>
+        </mxCell>
+        <mxCell id="spoke1-vm-a" value="IIS VM 1a&#10;+ Hybrid Worker" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#0078D4;strokeColor=#ffffff;html=1;align=center;fontSize=10;verticalLabelPosition=bottom;verticalAlign=top;aspect=fixed;shape=mxgraph.azure2.virtual_machine;" vertex="1" parent="1">
+          <mxGeometry x="780" y="360" width="80" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="spoke1-vm-b" value="IIS VM 1b&#10;+ Hybrid Worker" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#0078D4;strokeColor=#ffffff;html=1;align=center;fontSize=10;verticalLabelPosition=bottom;verticalAlign=top;aspect=fixed;shape=mxgraph.azure2.virtual_machine;" vertex="1" parent="1">
+          <mxGeometry x="1030" y="360" width="80" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="spoke1-vm-c" value="IIS VM 1c&#10;+ Hybrid Worker" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#0078D4;strokeColor=#ffffff;html=1;align=center;fontSize=10;verticalLabelPosition=bottom;verticalAlign=top;aspect=fixed;shape=mxgraph.azure2.virtual_machine;" vertex="1" parent="1">
+          <mxGeometry x="1280" y="360" width="80" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="spoke1-note" value="Each VM runs Send-PerfToEventHub.ps1 (60s scheduled task) → telemetry via hub PE → Event Hubs.&#10;Hybrid Worker pulls runbook jobs from Automation Account (via hub PE) and executes them locally on the VM." style="text;html=1;align=center;verticalAlign=middle;fontSize=10;fontStyle=2;fontColor=#444444;" vertex="1" parent="1">
+          <mxGeometry x="720" y="490" width="700" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="spoke1-route" value="Routes outbound traffic to Hub via VNet peering — no PEs in spoke (centralized PE pattern)" style="text;html=1;align=center;verticalAlign=middle;fontSize=10;fontStyle=2;fontColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="720" y="600" width="700" height="40" as="geometry"/>
+        </mxCell>
+
+        <!-- ── Spoke VNet 2 ── -->
+        <mxCell id="spoke2" value="Spoke VNet — prod-app-2  (Azure-hosted IIS)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;verticalAlign=top;fontSize=14;fontStyle=1;fontColor=#1F3864;" vertex="1" parent="1">
+          <mxGeometry x="680" y="720" width="780" height="460" as="geometry"/>
+        </mxCell>
+        <mxCell id="spoke2-icon" value="" style="sketch=0;outlineConnect=0;gradientColor=none;fillColor=#0078D4;strokeColor=#ffffff;html=1;aspect=fixed;shape=mxgraph.azure2.virtual_networks;" vertex="1" parent="1">
+          <mxGeometry x="700" y="732" width="22" height="22" as="geometry"/>
+        </mxCell>
+        <mxCell id="spoke2-subnet" value="subnet-app" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1e6f1;strokeColor=#9bb1d8;verticalAlign=top;fontSize=11;fontStyle=1;fontColor=#1F3864;" vertex="1" parent="1">
+          <mxGeometry x="700" y="780" width="740" height="380" as="geometry"/>
+        </mxCell>
+        <mxCell id="spoke2-nsg" value="NSG" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#0078D4;strokeColor=#ffffff;html=1;align=center;fontSize=9;verticalLabelPosition=bottom;verticalAlign=top;aspect=fixed;shape=mxgraph.azure2.network_security_groups;" vertex="1" parent="1">
+          <mxGeometry x="1396" y="788" width="28" height="28" as="geometry"/>
+        </mxCell>
+        <mxCell id="spoke2-vm-a" value="IIS VM 2a&#10;+ Hybrid Worker" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#0078D4;strokeColor=#ffffff;html=1;align=center;fontSize=10;verticalLabelPosition=bottom;verticalAlign=top;aspect=fixed;shape=mxgraph.azure2.virtual_machine;" vertex="1" parent="1">
+          <mxGeometry x="780" y="860" width="80" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="spoke2-vm-b" value="IIS VM 2b&#10;+ Hybrid Worker" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#0078D4;strokeColor=#ffffff;html=1;align=center;fontSize=10;verticalLabelPosition=bottom;verticalAlign=top;aspect=fixed;shape=mxgraph.azure2.virtual_machine;" vertex="1" parent="1">
+          <mxGeometry x="1030" y="860" width="80" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="spoke2-vm-c" value="IIS VM 2c&#10;+ Hybrid Worker" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#0078D4;strokeColor=#ffffff;html=1;align=center;fontSize=10;verticalLabelPosition=bottom;verticalAlign=top;aspect=fixed;shape=mxgraph.azure2.virtual_machine;" vertex="1" parent="1">
+          <mxGeometry x="1280" y="860" width="80" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="spoke2-note" value="Same pattern as prod-app-1 — telemetry to EH via hub PE, runbook jobs from Automation via hub PE.&#10;N additional spokes can be added without touching hub or PaaS — only peering + DNS link." style="text;html=1;align=center;verticalAlign=middle;fontSize=10;fontStyle=2;fontColor=#444444;" vertex="1" parent="1">
+          <mxGeometry x="720" y="990" width="700" height="60" as="geometry"/>
+        </mxCell>
+
+        <!-- ── On-Premises ── -->
+        <mxCell id="onprem" value="On-Premises Datacenter" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f4cccc;strokeColor=#cc4125;verticalAlign=top;fontSize=14;fontStyle=1;fontColor=#7F1D1D;" vertex="1" parent="1">
+          <mxGeometry x="1500" y="220" width="780" height="960" as="geometry"/>
+        </mxCell>
+        <mxCell id="onprem-subnet" value="On-prem network — IIS server farm" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fce5e5;strokeColor=#cc4125;verticalAlign=top;fontSize=11;fontStyle=1;fontColor=#7F1D1D;" vertex="1" parent="1">
+          <mxGeometry x="1520" y="280" width="740" height="420" as="geometry"/>
+        </mxCell>
+        <mxCell id="onprem-vm-a" value="IIS VM (on-prem) A&#10;+ Hybrid Worker&#10;(via Azure Arc or extension)" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#CC4125;strokeColor=#ffffff;html=1;align=center;fontSize=10;verticalLabelPosition=bottom;verticalAlign=top;aspect=fixed;shape=mxgraph.azure2.virtual_machine;" vertex="1" parent="1">
+          <mxGeometry x="1600" y="370" width="80" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="onprem-vm-b" value="IIS VM (on-prem) B&#10;+ Hybrid Worker" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#CC4125;strokeColor=#ffffff;html=1;align=center;fontSize=10;verticalLabelPosition=bottom;verticalAlign=top;aspect=fixed;shape=mxgraph.azure2.virtual_machine;" vertex="1" parent="1">
+          <mxGeometry x="1850" y="370" width="80" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="onprem-vm-c" value="IIS VM (on-prem) C&#10;+ Hybrid Worker" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#CC4125;strokeColor=#ffffff;html=1;align=center;fontSize=10;verticalLabelPosition=bottom;verticalAlign=top;aspect=fixed;shape=mxgraph.azure2.virtual_machine;" vertex="1" parent="1">
+          <mxGeometry x="2100" y="370" width="80" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="onprem-note" value="Hybrid Worker installed on each on-prem VM (Az Arc-enabled or manual MMA/AMA + extension).&#10;Outbound to Azure Automation + Event Hubs via ExpressRoute Private Peering — never traverses internet." style="text;html=1;align=center;verticalAlign=middle;fontSize=10;fontStyle=2;fontColor=#7F1D1D;" vertex="1" parent="1">
+          <mxGeometry x="1540" y="500" width="700" height="60" as="geometry"/>
+        </mxCell>
+
+        <!-- Customer edge router -->
+        <mxCell id="onprem-edge" value="Customer Edge / MSEE" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ead1dc;strokeColor=#741b47;fontSize=11;fontStyle=1;fontColor=#741B47;" vertex="1" parent="1">
+          <mxGeometry x="1700" y="780" width="380" height="120" as="geometry"/>
+        </mxCell>
+        <mxCell id="onprem-edge-icon" value="" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#741B47;strokeColor=#ffffff;html=1;align=center;fontSize=9;verticalLabelPosition=bottom;verticalAlign=top;aspect=fixed;shape=mxgraph.azure2.expressroute_circuits;" vertex="1" parent="1">
+          <mxGeometry x="1850" y="800" width="80" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="onprem-edge-note" value="Customer router → ExpressRoute circuit → Microsoft edge (MSEE).&#10;Private Peering carries: telemetry, runbook job pull, Az Arc agent traffic." style="text;html=1;align=center;verticalAlign=middle;fontSize=10;fontStyle=2;fontColor=#741B47;" vertex="1" parent="1">
+          <mxGeometry x="1540" y="930" width="700" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="onprem-dns-note" value="On-prem DNS forwarder must resolve privatelink.* zones via Azure Private DNS&#10;(usually a DNS Resolver in hub VNet)" style="text;html=1;align=center;verticalAlign=middle;fontSize=10;fontStyle=2;fontColor=#7F1D1D;" vertex="1" parent="1">
+          <mxGeometry x="1540" y="1010" width="700" height="40" as="geometry"/>
+        </mxCell>
+
+        <!-- ── Azure PaaS strip (bottom) ── -->
+        <mxCell id="paas" value="Azure PaaS resources (publicNetworkAccess = Disabled — reachable only via PE / Managed PE)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#10739e;verticalAlign=top;fontSize=14;fontStyle=1;fontColor=#0B5394;" vertex="1" parent="1">
+          <mxGeometry x="40" y="1220" width="2240" height="380" as="geometry"/>
+        </mxCell>
+        <mxCell id="paas-storage" value="Storage Account&#10;(WebJobs + cooldown)" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#0078D4;strokeColor=#ffffff;html=1;align=center;fontSize=10;verticalLabelPosition=bottom;verticalAlign=top;aspect=fixed;shape=mxgraph.azure2.storage_accounts;" vertex="1" parent="1">
+          <mxGeometry x="100" y="1300" width="80" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="paas-eh" value="Event Hubs namespace&#10;vmperf · iisperf · iislogs" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#0078D4;strokeColor=#ffffff;html=1;align=center;fontSize=10;verticalLabelPosition=bottom;verticalAlign=top;aspect=fixed;shape=mxgraph.azure2.event_hubs;" vertex="1" parent="1">
+          <mxGeometry x="420" y="1300" width="80" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="paas-adx" value="Azure Data Explorer&#10;cluster" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#0078D4;strokeColor=#ffffff;html=1;align=center;fontSize=10;verticalLabelPosition=bottom;verticalAlign=top;aspect=fixed;shape=mxgraph.azure2.data_explorer_clusters;" vertex="1" parent="1">
+          <mxGeometry x="780" y="1300" width="80" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="paas-mpe" value="ADX Managed Private Endpoint&#10;groupId: &quot;namespace&quot;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;strokeWidth=2;verticalAlign=middle;align=center;fontSize=10;fontStyle=1;fontColor=#7F6000;" vertex="1" parent="1">
+          <mxGeometry x="600" y="1450" width="240" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="paas-openai" value="Azure OpenAI&#10;o4-mini · gpt-4o-mini" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#0078D4;strokeColor=#ffffff;html=1;align=center;fontSize=10;verticalLabelPosition=bottom;verticalAlign=top;aspect=fixed;shape=mxgraph.azure2.cognitive_services;" vertex="1" parent="1">
+          <mxGeometry x="1080" y="1300" width="80" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="ampls" value="AMPLS — Azure Monitor Private Link Scope" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;verticalAlign=top;fontSize=11;fontStyle=1;fontColor=#1B5E20;" vertex="1" parent="1">
+          <mxGeometry x="1280" y="1280" width="500" height="160" as="geometry"/>
+        </mxCell>
+        <mxCell id="paas-law" value="Log Analytics&#10;Workspace" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#0078D4;strokeColor=#ffffff;html=1;align=center;fontSize=9;verticalLabelPosition=bottom;verticalAlign=top;aspect=fixed;shape=mxgraph.azure2.log_analytics_workspaces;" vertex="1" parent="1">
+          <mxGeometry x="1310" y="1320" width="60" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="paas-dce" value="Data Collection&#10;Endpoint (DCE)" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#0078D4;strokeColor=#ffffff;html=1;align=center;fontSize=9;verticalLabelPosition=bottom;verticalAlign=top;aspect=fixed;shape=mxgraph.azure2.azure_monitor;" vertex="1" parent="1">
+          <mxGeometry x="1500" y="1320" width="60" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="paas-appins" value="Application&#10;Insights" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#0078D4;strokeColor=#ffffff;html=1;align=center;fontSize=9;verticalLabelPosition=bottom;verticalAlign=top;aspect=fixed;shape=mxgraph.azure2.application_insights;" vertex="1" parent="1">
+          <mxGeometry x="1690" y="1320" width="60" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="paas-auto" value="Automation Account&#10;(runbooks · Hybrid Worker reg)" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#0078D4;strokeColor=#ffffff;html=1;align=center;fontSize=10;verticalLabelPosition=bottom;verticalAlign=top;aspect=fixed;shape=mxgraph.azure2.automation_accounts;" vertex="1" parent="1">
+          <mxGeometry x="1860" y="1300" width="80" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="paas-private-dns-note" value="All PaaS resources resolve via Azure Private DNS zones (privatelink.*) — linked to hub VNet, accessed cross-VNet via peering, accessed from on-prem via ExpressRoute + DNS forwarder." style="text;html=1;align=center;verticalAlign=middle;fontSize=10;fontStyle=2;fontColor=#0B5394;" vertex="1" parent="1">
+          <mxGeometry x="60" y="1540" width="2200" height="40" as="geometry"/>
+        </mxCell>
+
+        <!-- ───── Connectors ───── -->
+
+        <!-- ARM control plane -->
+        <mxCell id="e-arm-func" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;strokeColor=#666666;strokeWidth=1.5;fontSize=9;labelBackgroundColor=#FFFFFF;" edge="1" parent="1" source="arm" target="hub-func">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e-arm-func-lbl" value="ARM (job.create, deploy)" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=9;fontStyle=2;fontColor=#666666;labelBackgroundColor=#FFFFFF;" vertex="1" connectable="0" parent="e-arm-func">
+          <mxGeometry x="-0.4" relative="1" as="geometry"><mxPoint as="offset"/></mxGeometry>
+        </mxCell>
+
+        <mxCell id="e-arm-auto" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;strokeColor=#666666;strokeWidth=1.5;fontSize=9;labelBackgroundColor=#FFFFFF;" edge="1" parent="1" source="arm" target="paas-auto">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e-arm-auto-lbl" value="ARM (job.create)" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=9;fontStyle=2;fontColor=#666666;labelBackgroundColor=#FFFFFF;" vertex="1" connectable="0" parent="e-arm-auto">
+          <mxGeometry x="-0.4" relative="1" as="geometry"><mxPoint as="offset"/></mxGeometry>
+        </mxCell>
+
+        <!-- AAD tokens -->
+        <mxCell id="e-aad-func" style="edgeStyle=none;rounded=0;html=1;dashed=1;strokeColor=#5E5DF0;strokeWidth=1;fontSize=9;labelBackgroundColor=#FFFFFF;" edge="1" parent="1" source="aad" target="hub-func">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e-aad-func-lbl" value="MI tokens" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=9;fontStyle=2;fontColor=#5E5DF0;labelBackgroundColor=#FFFFFF;" vertex="1" connectable="0" parent="e-aad-func">
+          <mxGeometry x="-0.4" relative="1" as="geometry"><mxPoint as="offset"/></mxGeometry>
+        </mxCell>
+
+        <!-- Function App → PaaS (single bus, blue solid) -->
+        <mxCell id="e-func-paas" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeColor=#1F3864;strokeWidth=2;fontSize=10;labelBackgroundColor=#FFFFFF;" edge="1" parent="1" source="hub-func" target="hub-subnet-pe">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e-pe-paas-bus" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeColor=#1F3864;strokeWidth=2;fontSize=10;labelBackgroundColor=#FFFFFF;" edge="1" parent="1" source="hub-subnet-pe" target="paas">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e-pe-paas-bus-lbl" value="all data-plane calls&#10;(KQL · LLM · LAW · Storage · runbook ARM-via-PE)" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=9;fontColor=#1F3864;labelBackgroundColor=#FFFFFF;" vertex="1" connectable="0" parent="e-pe-paas-bus">
+          <mxGeometry x="-0.2" relative="1" as="geometry"><mxPoint as="offset"/></mxGeometry>
+        </mxCell>
+
+        <!-- VNet peering: Hub ↔ Spoke 1 -->
+        <mxCell id="e-peer-spoke1" style="edgeStyle=none;rounded=0;html=1;exitX=1;exitY=0.3;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;dashed=1;strokeColor=#E69138;strokeWidth=2.5;fontSize=10;fontStyle=1;labelBackgroundColor=#FFFFFF;fontColor=#783F04;startArrow=classic;endArrow=classic;" edge="1" parent="1" source="hub-vnet" target="spoke1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e-peer-spoke1-lbl" value="VNet peering" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;fontStyle=1;fontColor=#783F04;labelBackgroundColor=#FFFFFF;" vertex="1" connectable="0" parent="e-peer-spoke1">
+          <mxGeometry x="-0.4" relative="1" as="geometry"><mxPoint as="offset"/></mxGeometry>
+        </mxCell>
+
+        <!-- VNet peering: Hub ↔ Spoke 2 -->
+        <mxCell id="e-peer-spoke2" style="edgeStyle=none;rounded=0;html=1;exitX=1;exitY=0.7;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;dashed=1;strokeColor=#E69138;strokeWidth=2.5;fontSize=10;fontStyle=1;labelBackgroundColor=#FFFFFF;fontColor=#783F04;startArrow=classic;endArrow=classic;" edge="1" parent="1" source="hub-vnet" target="spoke2">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e-peer-spoke2-lbl" value="VNet peering" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;fontStyle=1;fontColor=#783F04;labelBackgroundColor=#FFFFFF;" vertex="1" connectable="0" parent="e-peer-spoke2">
+          <mxGeometry x="-0.4" relative="1" as="geometry"><mxPoint as="offset"/></mxGeometry>
+        </mxCell>
+
+        <!-- ExpressRoute: Hub ER Gateway ↔ Customer edge -->
+        <mxCell id="e-er" style="edgeStyle=none;rounded=0;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#CC0000;strokeWidth=4;fontSize=11;fontStyle=1;labelBackgroundColor=#FFFFFF;fontColor=#7F0000;startArrow=classic;endArrow=classic;" edge="1" parent="1" source="hub-er-gw" target="onprem-edge-icon">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e-er-lbl" value="ExpressRoute&#10;(Private Peering)" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=11;fontStyle=1;fontColor=#7F0000;labelBackgroundColor=#FFFFFF;" vertex="1" connectable="0" parent="e-er">
+          <mxGeometry x="-0.2" relative="1" as="geometry"><mxPoint as="offset"/></mxGeometry>
+        </mxCell>
+
+        <!-- Telemetry: Spoke 1 → EH (via hub PE) -->
+        <mxCell id="e-telem-spoke1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeColor=#0B5394;strokeWidth=2;fontSize=10;labelBackgroundColor=#FFFFFF;fontColor=#0B5394;" edge="1" parent="1" source="spoke1-vm-a" target="paas-eh">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e-telem-spoke1-lbl" value="telemetry (perf + logs)&#10;via hub EH PE" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=9;fontColor=#0B5394;labelBackgroundColor=#FFFFFF;" vertex="1" connectable="0" parent="e-telem-spoke1">
+          <mxGeometry x="-0.3" relative="1" as="geometry"><mxPoint as="offset"/></mxGeometry>
+        </mxCell>
+
+        <!-- Telemetry: Spoke 2 → EH -->
+        <mxCell id="e-telem-spoke2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeColor=#0B5394;strokeWidth=2;fontSize=10;labelBackgroundColor=#FFFFFF;fontColor=#0B5394;" edge="1" parent="1" source="spoke2-vm-a" target="paas-eh">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e-telem-spoke2-lbl" value="telemetry via hub EH PE" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=9;fontColor=#0B5394;labelBackgroundColor=#FFFFFF;" vertex="1" connectable="0" parent="e-telem-spoke2">
+          <mxGeometry x="-0.3" relative="1" as="geometry"><mxPoint as="offset"/></mxGeometry>
+        </mxCell>
+
+        <!-- Telemetry: On-prem → EH via ER -->
+        <mxCell id="e-telem-onprem" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#0B5394;strokeWidth=2;fontSize=10;labelBackgroundColor=#FFFFFF;fontColor=#0B5394;" edge="1" parent="1" source="onprem-edge-icon" target="paas-eh">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e-telem-onprem-lbl" value="telemetry over ExpressRoute&#10;→ hub EH PE" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=9;fontColor=#0B5394;labelBackgroundColor=#FFFFFF;" vertex="1" connectable="0" parent="e-telem-onprem">
+          <mxGeometry x="-0.3" relative="1" as="geometry"><mxPoint as="offset"/></mxGeometry>
+        </mxCell>
+
+        <!-- Runbook execution: Automation → Hybrid Workers (each cluster) -->
+        <mxCell id="e-rb-spoke1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;strokeColor=#9900CC;strokeWidth=2;fontSize=10;labelBackgroundColor=#FFFFFF;fontColor=#5B0F8B;" edge="1" parent="1" source="paas-auto" target="spoke1-vm-c">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e-rb-spoke1-lbl" value="runbook job pull&#10;(Hybrid Worker → Auto via PE)" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=9;fontColor=#5B0F8B;fontStyle=2;labelBackgroundColor=#FFFFFF;" vertex="1" connectable="0" parent="e-rb-spoke1">
+          <mxGeometry x="-0.3" relative="1" as="geometry"><mxPoint as="offset"/></mxGeometry>
+        </mxCell>
+
+        <mxCell id="e-rb-spoke2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;strokeColor=#9900CC;strokeWidth=2;fontSize=10;labelBackgroundColor=#FFFFFF;fontColor=#5B0F8B;" edge="1" parent="1" source="paas-auto" target="spoke2-vm-c">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="e-rb-onprem" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;strokeColor=#9900CC;strokeWidth=2;fontSize=10;labelBackgroundColor=#FFFFFF;fontColor=#5B0F8B;" edge="1" parent="1" source="paas-auto" target="onprem-edge-icon">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e-rb-onprem-lbl" value="runbook job pull over ExpressRoute" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=9;fontColor=#5B0F8B;fontStyle=2;labelBackgroundColor=#FFFFFF;" vertex="1" connectable="0" parent="e-rb-onprem">
+          <mxGeometry x="-0.3" relative="1" as="geometry"><mxPoint as="offset"/></mxGeometry>
+        </mxCell>
+
+        <!-- ADX Managed PE → EH (highlighted) -->
+        <mxCell id="e-mpe" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;strokeColor=#D6B656;strokeWidth=4;fontSize=11;fontStyle=1;labelBackgroundColor=#FFFFFF;fontColor=#7F6000;" edge="1" parent="1" source="paas-mpe" target="paas-eh">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e-mpe-lbl" value="Managed PE — private ingestion path" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;fontStyle=1;fontColor=#7F6000;labelBackgroundColor=#FFFFFF;" vertex="1" connectable="0" parent="e-mpe">
+          <mxGeometry x="-0.3" relative="1" as="geometry"><mxPoint as="offset"/></mxGeometry>
+        </mxCell>
+        <mxCell id="e-adx-mpe" style="edgeStyle=none;rounded=0;html=1;dashed=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#D6B656;strokeWidth=2;fontSize=9;" edge="1" parent="1" source="paas-adx" target="paas-mpe">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- ── Legend ── -->
+        <mxCell id="legend" value="Legend" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;verticalAlign=top;fontSize=11;fontStyle=1;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="40" y="1620" width="2240" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="legend-1" value="── solid blue: data plane (private link)  ·  ─ ─ dashed orange: VNet peering  ·  ── thick red: ExpressRoute  ·  ─ ─ dashed grey: ARM control plane  ·  ─ ─ dashed purple: runbook job pull  ·  ── thick orange: ADX Managed PE" style="text;html=1;align=center;verticalAlign=middle;fontSize=10;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="60" y="1645" width="2200" height="20" as="geometry"/>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+
+  <!-- ═══════════════════════════════════════════════════════════════════════ -->
+  <!--  PAGE 2 — Hub VNet Private Endpoint detail                               -->
+  <!-- ═══════════════════════════════════════════════════════════════════════ -->
+  <diagram name="2 — Hub VNet PE detail" id="hub-pe-detail">
+    <mxGraphModel dx="1700" dy="1240" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1700" pageHeight="1240" math="0" shadow="0" background="#FFFFFF">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <!-- Title -->
+        <mxCell id="title" value="Hub VNet — Private Endpoint Detail" style="text;html=1;align=center;verticalAlign=middle;fontSize=20;fontStyle=1;fontColor=#1F3864;" vertex="1" parent="1">
+          <mxGeometry x="40" y="20" width="1620" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="subtitle" value="Production VMs are NOT in this VNet — see Page 1 for spokes / on-prem.  This view shows what's reachable privately from inside the hub." style="text;html=1;align=center;verticalAlign=middle;fontSize=12;fontStyle=2;fontColor=#555555;" vertex="1" parent="1">
+          <mxGeometry x="40" y="60" width="1620" height="24" as="geometry"/>
+        </mxCell>
+
+        <!-- Public zone -->
+        <mxCell id="public-zone" value="PUBLIC — Microsoft control plane (always public)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8f8f8;strokeColor=#999999;dashed=1;verticalAlign=top;fontSize=12;fontStyle=1;fontColor=#555555;" vertex="1" parent="1">
+          <mxGeometry x="40" y="100" width="1620" height="100" as="geometry"/>
+        </mxCell>
+        <mxCell id="aad" value="Microsoft Entra ID&#10;(token endpoint)" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#0078D4;strokeColor=#ffffff;html=1;align=center;fontSize=10;verticalLabelPosition=bottom;verticalAlign=top;aspect=fixed;shape=mxgraph.azure2.azure_active_directory;" vertex="1" parent="1">
+          <mxGeometry x="380" y="125" width="60" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="arm" value="Azure Resource Manager&#10;(management.azure.com)" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#0078D4;strokeColor=#ffffff;html=1;align=center;fontSize=10;verticalLabelPosition=bottom;verticalAlign=top;aspect=fixed;shape=mxgraph.azure2.management_groups;" vertex="1" parent="1">
+          <mxGeometry x="900" y="125" width="60" height="60" as="geometry"/>
+        </mxCell>
+
+        <!-- Hub VNet -->
+        <mxCell id="vnet" value="Hub VNet" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;verticalAlign=top;fontSize=14;fontStyle=1;fontColor=#1F3864;" vertex="1" parent="1">
+          <mxGeometry x="40" y="220" width="1000" height="980" as="geometry"/>
+        </mxCell>
+
+        <!-- subnet-func-integ -->
+        <mxCell id="subnet-func" value="subnet-func-integ" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1e6f1;strokeColor=#9bb1d8;verticalAlign=top;fontSize=11;fontStyle=1;fontColor=#1F3864;" vertex="1" parent="1">
+          <mxGeometry x="60" y="280" width="440" height="200" as="geometry"/>
+        </mxCell>
+        <mxCell id="subnet-func-nsg" value="NSG" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#0078D4;strokeColor=#ffffff;html=1;align=center;fontSize=9;verticalLabelPosition=bottom;verticalAlign=top;aspect=fixed;shape=mxgraph.azure2.network_security_groups;" vertex="1" parent="1">
+          <mxGeometry x="456" y="288" width="28" height="28" as="geometry"/>
+        </mxCell>
+        <mxCell id="func-app" value="Function App&#10;(VNet integ · WEBSITE_VNET_ROUTE_ALL=1)" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#0078D4;strokeColor=#ffffff;html=1;align=center;fontSize=10;verticalLabelPosition=bottom;verticalAlign=top;aspect=fixed;shape=mxgraph.azure2.function_apps;" vertex="1" parent="1">
+          <mxGeometry x="240" y="340" width="80" height="80" as="geometry"/>
+        </mxCell>
+
+        <!-- subnet-pe -->
+        <mxCell id="subnet-pe" value="subnet-pe (private endpoints)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1e6f1;strokeColor=#9bb1d8;verticalAlign=top;fontSize=11;fontStyle=1;fontColor=#1F3864;" vertex="1" parent="1">
+          <mxGeometry x="540" y="280" width="480" height="700" as="geometry"/>
+        </mxCell>
+        <mxCell id="subnet-pe-pl" value="Private Link" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#0078D4;strokeColor=#ffffff;html=1;align=center;fontSize=9;verticalLabelPosition=bottom;verticalAlign=top;aspect=fixed;shape=mxgraph.azure2.private_link_service;" vertex="1" parent="1">
+          <mxGeometry x="976" y="288" width="28" height="28" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="pe-storage" value="PE → Storage" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#0078D4;strokeColor=#ffffff;html=1;align=center;fontSize=9;verticalLabelPosition=bottom;verticalAlign=top;aspect=fixed;shape=mxgraph.azure2.private_link_service;" vertex="1" parent="1">
+          <mxGeometry x="580" y="340" width="40" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="pe-storage-lbl" value="table/blob/queue/file · healingcooldown · WebJobs" style="text;html=1;align=left;verticalAlign=middle;fontSize=10;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="660" y="340" width="340" height="40" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="pe-eh" value="PE → Event Hubs" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#0078D4;strokeColor=#ffffff;html=1;align=center;fontSize=9;verticalLabelPosition=bottom;verticalAlign=top;aspect=fixed;shape=mxgraph.azure2.private_link_service;" vertex="1" parent="1">
+          <mxGeometry x="580" y="420" width="40" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="pe-eh-lbl" value="vmperf-eh · iisperf-eh · iislogs-eh — used by all spokes + on-prem" style="text;html=1;align=left;verticalAlign=middle;fontSize=10;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="660" y="420" width="340" height="40" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="pe-adx" value="PE → ADX" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#0078D4;strokeColor=#ffffff;html=1;align=center;fontSize=9;verticalLabelPosition=bottom;verticalAlign=top;aspect=fixed;shape=mxgraph.azure2.private_link_service;" vertex="1" parent="1">
+          <mxGeometry x="580" y="500" width="40" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="pe-adx-lbl" value="VMPerf · IISPerf · IISLogsParsed · IISHttpErrors · PerformanceBaseline" style="text;html=1;align=left;verticalAlign=middle;fontSize=10;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="660" y="500" width="340" height="40" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="pe-openai" value="PE → OpenAI" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#0078D4;strokeColor=#ffffff;html=1;align=center;fontSize=9;verticalLabelPosition=bottom;verticalAlign=top;aspect=fixed;shape=mxgraph.azure2.private_link_service;" vertex="1" parent="1">
+          <mxGeometry x="580" y="580" width="40" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="pe-openai-lbl" value="o4-mini (analyze) · gpt-4o-mini (judge)" style="text;html=1;align=left;verticalAlign=middle;fontSize=10;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="660" y="580" width="340" height="40" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="pe-ampls" value="PE → AMPLS" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#0078D4;strokeColor=#ffffff;html=1;align=center;fontSize=9;verticalLabelPosition=bottom;verticalAlign=top;aspect=fixed;shape=mxgraph.azure2.private_link_service;" vertex="1" parent="1">
+          <mxGeometry x="580" y="660" width="40" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="pe-ampls-lbl" value="LAW + DCE + AppIns (one PE for the whole AMPLS scope)" style="text;html=1;align=left;verticalAlign=middle;fontSize=10;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="660" y="660" width="340" height="40" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="pe-auto" value="PE → Automation" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#0078D4;strokeColor=#ffffff;html=1;align=center;fontSize=9;verticalLabelPosition=bottom;verticalAlign=top;aspect=fixed;shape=mxgraph.azure2.private_link_service;" vertex="1" parent="1">
+          <mxGeometry x="580" y="740" width="40" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="pe-auto-lbl" value="Hybrid Worker job traffic — used by every prod VM (spokes + on-prem)" style="text;html=1;align=left;verticalAlign=middle;fontSize=10;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="660" y="740" width="340" height="40" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="pe-scm" value="PE → Func SCM" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#0078D4;strokeColor=#ffffff;html=1;align=center;fontSize=9;verticalLabelPosition=bottom;verticalAlign=top;aspect=fixed;shape=mxgraph.azure2.private_link_service;" vertex="1" parent="1">
+          <mxGeometry x="580" y="820" width="40" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="pe-scm-lbl" value="zip-deploy from jumpbox / DevOps runner inside hub" style="text;html=1;align=left;verticalAlign=middle;fontSize=10;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="660" y="820" width="340" height="40" as="geometry"/>
+        </mxCell>
+
+        <!-- GatewaySubnet -->
+        <mxCell id="subnet-gw" value="GatewaySubnet" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1e6f1;strokeColor=#9bb1d8;verticalAlign=top;fontSize=11;fontStyle=1;fontColor=#1F3864;" vertex="1" parent="1">
+          <mxGeometry x="60" y="540" width="440" height="200" as="geometry"/>
+        </mxCell>
+        <mxCell id="er-gw" value="ExpressRoute Gateway&#10;(connects on-prem)" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#0078D4;strokeColor=#ffffff;html=1;align=center;fontSize=10;verticalLabelPosition=bottom;verticalAlign=top;aspect=fixed;shape=mxgraph.azure2.expressroute_circuits;" vertex="1" parent="1">
+          <mxGeometry x="240" y="600" width="80" height="80" as="geometry"/>
+        </mxCell>
+
+        <!-- subnet-jumpbox -->
+        <mxCell id="subnet-jump" value="subnet-jumpbox  (deploy + ops access)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1e6f1;strokeColor=#9bb1d8;verticalAlign=top;fontSize=11;fontStyle=1;fontColor=#1F3864;" vertex="1" parent="1">
+          <mxGeometry x="60" y="780" width="440" height="200" as="geometry"/>
+        </mxCell>
+        <mxCell id="jumpbox" value="Jumpbox / Self-hosted runner&#10;(runs Deploy-*.ps1 → Func SCM PE)" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#0078D4;strokeColor=#ffffff;html=1;align=center;fontSize=10;verticalLabelPosition=bottom;verticalAlign=top;aspect=fixed;shape=mxgraph.azure2.virtual_machine;" vertex="1" parent="1">
+          <mxGeometry x="240" y="840" width="80" height="80" as="geometry"/>
+        </mxCell>
+
+        <!-- PaaS column -->
+        <mxCell id="paas" value="Azure PaaS resources (publicNetworkAccess = Disabled)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#10739e;verticalAlign=top;fontSize=14;fontStyle=1;fontColor=#0B5394;" vertex="1" parent="1">
+          <mxGeometry x="1080" y="220" width="580" height="980" as="geometry"/>
+        </mxCell>
+        <mxCell id="svc-storage" value="Storage Account" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#0078D4;strokeColor=#ffffff;html=1;align=center;fontSize=10;verticalLabelPosition=bottom;verticalAlign=top;aspect=fixed;shape=mxgraph.azure2.storage_accounts;" vertex="1" parent="1">
+          <mxGeometry x="1140" y="290" width="80" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="svc-eh" value="Event Hubs namespace" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#0078D4;strokeColor=#ffffff;html=1;align=center;fontSize=10;verticalLabelPosition=bottom;verticalAlign=top;aspect=fixed;shape=mxgraph.azure2.event_hubs;" vertex="1" parent="1">
+          <mxGeometry x="1380" y="290" width="80" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="svc-adx" value="Azure Data Explorer" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#0078D4;strokeColor=#ffffff;html=1;align=center;fontSize=10;verticalLabelPosition=bottom;verticalAlign=top;aspect=fixed;shape=mxgraph.azure2.data_explorer_clusters;" vertex="1" parent="1">
+          <mxGeometry x="1380" y="490" width="80" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="mpe-callout" value="ADX Managed PE&#10;groupId: &quot;namespace&quot;&#10;→ Event Hubs" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;strokeWidth=2;verticalAlign=middle;align=center;fontSize=11;fontStyle=1;fontColor=#7F6000;" vertex="1" parent="1">
+          <mxGeometry x="1140" y="410" width="220" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="svc-openai" value="Azure OpenAI" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#0078D4;strokeColor=#ffffff;html=1;align=center;fontSize=10;verticalLabelPosition=bottom;verticalAlign=top;aspect=fixed;shape=mxgraph.azure2.cognitive_services;" vertex="1" parent="1">
+          <mxGeometry x="1140" y="690" width="80" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="ampls" value="AMPLS — Azure Monitor Private Link Scope" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;verticalAlign=top;fontSize=11;fontStyle=1;fontColor=#1B5E20;" vertex="1" parent="1">
+          <mxGeometry x="1100" y="820" width="540" height="180" as="geometry"/>
+        </mxCell>
+        <mxCell id="svc-law" value="Log Analytics" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#0078D4;strokeColor=#ffffff;html=1;align=center;fontSize=9;verticalLabelPosition=bottom;verticalAlign=top;aspect=fixed;shape=mxgraph.azure2.log_analytics_workspaces;" vertex="1" parent="1">
+          <mxGeometry x="1130" y="860" width="60" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="svc-dce" value="DCE" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#0078D4;strokeColor=#ffffff;html=1;align=center;fontSize=9;verticalLabelPosition=bottom;verticalAlign=top;aspect=fixed;shape=mxgraph.azure2.azure_monitor;" vertex="1" parent="1">
+          <mxGeometry x="1340" y="860" width="60" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="svc-appins" value="App Insights" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#0078D4;strokeColor=#ffffff;html=1;align=center;fontSize=9;verticalLabelPosition=bottom;verticalAlign=top;aspect=fixed;shape=mxgraph.azure2.application_insights;" vertex="1" parent="1">
+          <mxGeometry x="1550" y="860" width="60" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="svc-auto" value="Automation Account" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#0078D4;strokeColor=#ffffff;html=1;align=center;fontSize=10;verticalLabelPosition=bottom;verticalAlign=top;aspect=fixed;shape=mxgraph.azure2.automation_accounts;" vertex="1" parent="1">
+          <mxGeometry x="1380" y="690" width="80" height="80" as="geometry"/>
+        </mxCell>
+
+        <!-- Connectors -->
+        <mxCell id="e-arm-scm" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;strokeColor=#666666;strokeWidth=1.5;fontSize=9;labelBackgroundColor=#FFFFFF;" edge="1" parent="1" source="arm" target="pe-scm">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e-arm-auto" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;strokeColor=#666666;strokeWidth=1.5;fontSize=9;labelBackgroundColor=#FFFFFF;" edge="1" parent="1" source="arm" target="svc-auto">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e-func-pe" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#1F3864;strokeWidth=2;fontSize=10;labelBackgroundColor=#FFFFFF;" edge="1" parent="1" source="func-app" target="subnet-pe">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e-func-pe-lbl" value="all data-plane calls" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=9;fontColor=#1F3864;labelBackgroundColor=#FFFFFF;" vertex="1" connectable="0" parent="e-func-pe">
+          <mxGeometry x="-0.3" relative="1" as="geometry"><mxPoint as="offset"/></mxGeometry>
+        </mxCell>
+
+        <mxCell id="e-pe-storage" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeColor=#1F3864;strokeWidth=1;" edge="1" parent="1" source="pe-storage" target="svc-storage"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e-pe-eh" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeColor=#1F3864;strokeWidth=1;" edge="1" parent="1" source="pe-eh" target="svc-eh"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e-pe-adx" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeColor=#1F3864;strokeWidth=1;" edge="1" parent="1" source="pe-adx" target="svc-adx"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e-pe-openai" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeColor=#1F3864;strokeWidth=1;" edge="1" parent="1" source="pe-openai" target="svc-openai"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e-pe-ampls" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.2;strokeColor=#1F3864;strokeWidth=1;" edge="1" parent="1" source="pe-ampls" target="ampls"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e-pe-auto" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeColor=#1F3864;strokeWidth=1;" edge="1" parent="1" source="pe-auto" target="svc-auto"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <!-- Managed PE -->
+        <mxCell id="e-mpe" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;strokeColor=#D6B656;strokeWidth=3;fontSize=11;fontStyle=1;labelBackgroundColor=#FFFFFF;fontColor=#7F6000;" edge="1" parent="1" source="mpe-callout" target="svc-eh">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e-mpe-lbl" value="Managed PE — private ingestion" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;fontStyle=1;fontColor=#7F6000;labelBackgroundColor=#FFFFFF;" vertex="1" connectable="0" parent="e-mpe">
+          <mxGeometry x="-0.4" relative="1" as="geometry"><mxPoint as="offset"/></mxGeometry>
+        </mxCell>
+        <mxCell id="e-adx-mpe" style="edgeStyle=none;rounded=0;html=1;dashed=1;exitX=0;exitY=0.5;entryX=1;entryY=0.5;strokeColor=#D6B656;strokeWidth=2;" edge="1" parent="1" source="svc-adx" target="mpe-callout"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <!-- Legend -->
+        <mxCell id="legend-2" value="Solid blue = data plane via PE  ·  Dashed grey = ARM control plane (always public)  ·  Thick orange = ADX Managed Private Endpoint to Event Hubs" style="text;html=1;align=center;verticalAlign=middle;fontSize=10;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="40" y="1210" width="1620" height="20" as="geometry"/>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
